@@ -1,8 +1,11 @@
 package com.anxer.notification
 
+import WorkerM
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import com.anxer.notification.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -15,8 +18,9 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this@MainActivity, MyNotificationService::class.java)
         startService(intent)
         mainBinding.buttonSubmit.setOnClickListener {
+            val workM = OneTimeWorkRequest.Builder(workerClass = WorkerM::class.java).build()
+            WorkManager.getInstance(this).enqueue(workM)
             val intentOnChange = Intent("Data_Changed")
-            intentOnChange.putExtra("name", "${mainBinding.editTextText.text}")
             sendBroadcast(intentOnChange)
         }
     }

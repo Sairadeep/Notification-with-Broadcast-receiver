@@ -1,5 +1,6 @@
 package com.anxer.notification
 
+import Utils
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -19,7 +20,7 @@ class MyNotificationService : Service() {
     private val receiver: BroadcastReceiver = object : BroadcastReceiver() {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun onReceive(context: Context?, intent: Intent?) {
-            notification(intent?.getStringExtra("name").toString())
+            notification(Utils.getTimeNow())
         }
     }
 
@@ -40,7 +41,7 @@ class MyNotificationService : Service() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun notification(text: String) {
+    private fun notification(time: String) {
         val intent = Intent(this@MyNotificationService, MyNotificationService::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         val notificationChannelID = "Notification Service"
@@ -54,9 +55,9 @@ class MyNotificationService : Service() {
             getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         }
         notificationManager.createNotificationChannel(channel)
-        notificationBuilder.setContentTitle("Name").setContentText("Entered Name")
+        notificationBuilder.setContentTitle("Time").setContentText("Entered Name")
             .setSmallIcon(R.drawable.code).setStyle(
-                NotificationCompat.BigTextStyle().bigText(text)
+                NotificationCompat.BigTextStyle().bigText(time)
             ).priority = NotificationCompat.PRIORITY_MAX
         notificationBuilder.setContentIntent(pendingIntent)
         notificationManager.notify(1, notificationBuilder.build())
